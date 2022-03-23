@@ -1,0 +1,21 @@
+version: '3.7'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+#   Check what this block is doing for logging; I think it is something newer
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    ports:
+      - '5432:5432'
+    volumes:
+      # This is to just store our data for the postgres database
+      - ./postgres-data:/var/lib/postgresql/data
+      - ./database/postgres/database_setup.sql:/docker-entrypoint-initdb.d/database_setup.sql
+      - ./database/postgres/dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql

@@ -1,0 +1,12 @@
+# Database Section
+postgres:
+  user: postgres
+  password: postgres
+  database:
+  host: localhost
+  port: 5432
+
+# App Section
+api:
+  port: 8080
+
