@@ -18,4 +18,3 @@ services:
       # This is to just store our data for the postgres database
       - ./postgres-data:/var/lib/postgresql/data
       - ./database/postgres/database_setup.sql:/docker-entrypoint-initdb.d/database_setup.sql
-      - ./database/postgres/dummy_data.sql:/docker-entrypoint-initdb.d/dummy_data.sql

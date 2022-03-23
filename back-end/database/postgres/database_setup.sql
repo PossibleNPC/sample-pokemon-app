@@ -1,8 +1,8 @@
--- We can create the default database through the POSTGRES_DB env in the container along with the POSTGRES_USER and POSTGRES_PASSWORD
 create table if not exists pokemon(
 unique_id int primary key,
 pokedex_number int not null,
-name text not null,	generation int not null,
+name text not null,
+generation int not null,
 status text not null,
 species text not null,
 type_1 text not null,
@@ -47,6 +47,3 @@ against_dark float,
 against_steel float,
 against_fairy float
 )
-
--- We might need to come back and change out the data types, or add additional constraints as needed
--- Not sure if we captured all the NULLs or not, but oh well
