@@ -14,7 +14,7 @@ import (
 func main() {
 	var cfg config.Config
 
-	config.GetConfFile(&cfg)
+	config.GetConfFile(&cfg, "./back-end/config.yml")
 	config.GetConfEnv(&cfg)
 
 	psqlConnString := fmt.Sprintf("postgres://%s:%s@%s:%d",
