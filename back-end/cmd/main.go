@@ -4,12 +4,20 @@ package main
 
 import (
 	"fmt"
+	"github.com/PossibleNPC/sample-pokemon-app/internal/api"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/config"
+	"net/http"
+	"os"
 )
 
 func main() {
 	var cfg config.Config
-	config.GetConfFile(&cfg)
+	config.GetConfFile(&cfg, "./back-end/config.yml")
 	config.GetConfEnv(&cfg)
-	fmt.Printf("%+v", cfg)
+
+	router := api.Api()
+	err := http.ListenAndServe(":" + cfg.Api.Port, router); if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 }

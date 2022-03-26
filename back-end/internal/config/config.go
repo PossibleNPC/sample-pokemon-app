@@ -13,15 +13,15 @@ type Config struct {
 		Password string `yaml:"password" envconfig:"DB_PASSWORD"`
 		Database string `yaml:"database" envconfig:"DB"`
 		Host string `yaml:"host" envconfig:"DB_HOST"`
-		Port int `yaml:"port" envconfig:"DB_PORT"`
+		Port string `yaml:"port" envconfig:"DB_PORT"`
 	} `yaml:"postgres"`
 	Api struct {
-		Port int `yaml:"port"`
+		Port string `yaml:"port"`
 	}`yaml:"api"`
 }
 
-func GetConfFile(cfg *Config) {
-	ymlConf, err := os.Open("./config.yml")
+func GetConfFile(cfg *Config, filepath string) {
+	ymlConf, err := os.Open(filepath)
 	if err != nil {
 		confError(err)
 	}
