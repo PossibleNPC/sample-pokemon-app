@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+
 // Api is a function that returns a Go-Chi Mux that has been preconfigured specifically for this application.
 // It includes desired middleware, routes, errors, etc. as desired.
 func Api() *chi.Mux {
@@ -15,5 +16,8 @@ func Api() *chi.Mux {
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hello from Go-Chi!"))
 	})
+	router.Get("/pokemon", HandlePokemonResults)
+	router.Get("/pokemon/{name}", HandleNameResults)
+	router.Get("/pokemon/{type}", HandleTypeResults)
 	return router
 }
