@@ -7,7 +7,6 @@ services:
     environment:
       - DB_USER=postgres
       - DB_PASSWORD=postgres
-#   Check what this block is doing for logging; I think it is something newer
     logging:
       options:
         max-size: 10m

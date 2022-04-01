@@ -14,13 +14,18 @@ type Config struct {
 		Database string `yaml:"database" envconfig:"DB"`
 		Host string `yaml:"host" envconfig:"DB_HOST"`
 		Port string `yaml:"port" envconfig:"DB_PORT"`
+		Dsn string
 	} `yaml:"postgres"`
 	Api struct {
 		Port string `yaml:"port"`
 	}`yaml:"api"`
 }
 
-func GetConfFile(cfg *Config, filepath string) {
+func NewConfig() *Config {
+	return &Config{}
+}
+
+func (cfg *Config) GetConfFile(filepath string) {
 	ymlConf, err := os.Open(filepath)
 	if err != nil {
 		confError(err)
@@ -34,13 +39,19 @@ func GetConfFile(cfg *Config, filepath string) {
 	}
 }
 
-func GetConfEnv(cfg *Config) {
+func (cfg *Config) GetConfEnv() {
 	err := envconfig.Process("", cfg)
 	if err != nil {
 		confError(err)
 	}
 }
 
+func (cfg *Config) PsqlConnString() {
+	cfg.Database.Dsn = fmt.Sprintf("postgres://%s:%s@%s:%s?sslmode=disable",
+		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
+}
+
+// TODO: This might need to be gotten rid of
 func confError(err error) {
 	fmt.Println("received error: ", err)
 	os.Exit(1)

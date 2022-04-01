@@ -1,33 +1,41 @@
 package database
 
 import (
-	"context"
-	"fmt"
-	"github.com/PossibleNPC/sample-pokemon-app/internal/config"
-	"github.com/jackc/pgx/v4"
-	"github.com/jackc/pgx/v4/pgxpool"
+	"database/sql"
 	"log"
+
+	_ "github.com/lib/pq"
 )
+
+type PokemonDb struct {
+	conn *sql.DB
+}
+
+func NewPokemonDb(dsn string) *PokemonDb {
+	db, err := sql.Open("postgres", dsn)
+
+	if err != nil {
+		log.Fatalf("error opening database: %s", err)
+	}
+
+	err = db.Ping()
+	if err != nil {
+		log.Fatalf("error pinging database: %s", err)
+	}
+
+	return &PokemonDb{conn: db}
+}
 
 // Okay, so the config for these utils needs to be propagated down to here from Main since these utils aren't made to
 // be standalone, unlike the ingest_data script.
 
-func ConnPool(context context.Context, cfg *config.Config)(*pgxpool.Pool, error) {
-	psqlConnString := fmt.Sprintf("postgres://%s:%s@%s:%s",
-		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
-	dbpool, err := pgxpool.Connect(context, psqlConnString)
-	if err != nil {
-		return nil, err
-	}
-	return dbpool, nil
-}
+func (pokemonDb *PokemonDb) GetPokemon() (*sql.Rows, error) {
+	stmt := `SELECT unique_id, name, status, generation from public.pokemon limit 10;`
 
-func GetPokemon(context context.Context, dbpool *pgxpool.Pool) (pgx.Rows, error) {
-	stmt := `SELECT * from public.pokemon limit 10;`
-
-	rows, err := dbpool.Query(context, stmt)
+	rows, err := pokemonDb.conn.Query(stmt)
 	if err != nil {
 		log.Fatalf("received error: %s\n", err)
 	}
+
 	return rows, nil
 }
