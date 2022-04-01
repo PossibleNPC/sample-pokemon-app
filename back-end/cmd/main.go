@@ -12,14 +12,14 @@ import (
 	"os"
 )
 
-type Application struct {
+type application struct {
 	cfg *config.Config
 	db *database.PokemonDb
 	router chi.Router
 }
 
 func main() {
-	app := &Application{}
+	app := &application{}
 	app.cfg = config.NewConfig()
 	app.cfg.GetConfFile("./back-end/config.yml")
 	app.cfg.GetConfEnv()

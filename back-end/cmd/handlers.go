@@ -26,13 +26,13 @@ import (
 
 // HandleIndex is meant to return the Index HTML page for the app. I'm not sure if it can serve up a React App or not,
 // but we will try.
-func (app *Application) HandleIndex(w http.ResponseWriter, _ *http.Request) {
+func (app *application) HandleIndex(w http.ResponseWriter, _ *http.Request) {
 	w.Write([]byte("This is the Index HTML Page... Not yet implemented."))
 }
 
 // HandlePokemonResults is meant to return results for all Pokemon in the database as paginated results, starting with
 // 50 results.
-func (app *Application) HandlePokemonResults(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandlePokemonResults(w http.ResponseWriter, r *http.Request) {
 	rows, err := app.db.GetPokemon()
 
 	if err != nil {
@@ -66,14 +66,14 @@ func (app *Application) HandlePokemonResults(w http.ResponseWriter, r *http.Requ
 }
 
 // HandleTypeResults returns paginated results matching the type of Pokemon a user wants to query, starting with 50 results.
-func (app *Application) HandleTypeResults(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandleTypeResults(w http.ResponseWriter, r *http.Request) {
 	typeParam := chi.URLParam(r, "type")
 	w.Write([]byte(fmt.Sprintf("Response with Pokemon Results matching Type; paginated.\n%s", typeParam)))
 }
 
 // HandleNameResults returns a result, or results that match a given name. A name can have multiple results because of
 // the regional versions added in later gens.
-func (app *Application) HandleNameResults(w http.ResponseWriter, r *http.Request) {
+func (app *application) HandleNameResults(w http.ResponseWriter, r *http.Request) {
 	nameParam := chi.URLParam(r, "name")
 	w.Write([]byte(fmt.Sprintf("Response with either one result, or many in the case of matching same name, but different regions.\n%s", nameParam)))
 }
