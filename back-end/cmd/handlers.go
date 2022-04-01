@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/models"
 	"github.com/go-chi/chi/v5"
-	"log"
 	"net/http"
 )
 
@@ -36,23 +35,18 @@ func (app *application) HandlePokemonResults(w http.ResponseWriter, r *http.Requ
 	rows, err := app.db.GetPokemon()
 
 	if err != nil {
-		log.Fatalf("%s", err)
+		app.errorLog.Fatalf("%s", err)
 	}
 
 	defer rows.Close()
 
 	for rows.Next() {
-		//values, err := rows.Values()
-		//if err != nil {
-		//	log.Fatal("error on returned rows")
-		//}
-		//
-		//res := fmt.Sprintf("%s %s %s %s %s", values[0], values[2], values[3], values[4], values[5])
+
 		pokemon := &models.Pokemon{}
 
 		err = rows.Scan(&pokemon.Id, &pokemon.Name, &pokemon.Status, &pokemon.Generation)
 		if err != nil {
-			log.Fatalf("unable to load results: %s", err)
+			app.errorLog.Fatalf("unable to load results: %s", err)
 		}
 		out, err := json.Marshal(pokemon)
 		if err != nil {
@@ -61,8 +55,6 @@ func (app *application) HandlePokemonResults(w http.ResponseWriter, r *http.Requ
 
 		w.Write(out)
 	}
-
-	//w.Write([]byte("Response with all Pokemon and default paginated results."))
 }
 
 // HandleTypeResults returns paginated results matching the type of Pokemon a user wants to query, starting with 50 results.

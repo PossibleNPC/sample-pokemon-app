@@ -3,23 +3,28 @@ package main
 // TODO: Purpose of this script is to start our server for the API
 
 import (
-	"fmt"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/config"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/database"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"log"
 	"net/http"
 	"os"
 )
 
 type application struct {
 	cfg *config.Config
+	errorLog *log.Logger
+	infoLog *log.Logger
 	db *database.PokemonDb
 	router chi.Router
 }
 
 func main() {
-	app := &application{}
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+
+	app := &application{errorLog: errorLog, infoLog: infoLog}
 	app.cfg = config.NewConfig()
 	app.cfg.GetConfFile("./back-end/config.yml")
 	app.cfg.GetConfEnv()
@@ -38,7 +43,6 @@ func main() {
 	// TODO: The context for the app needs to come from Main, and not from the sub-modules
 	// More research is needed to fully understand Context.
 	err := http.ListenAndServe(":" + app.cfg.Api.Port, app.router); if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		errorLog.Fatalf("failed to start the server: %s", err)
 	}
 }
