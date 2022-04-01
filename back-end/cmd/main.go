@@ -6,7 +6,6 @@ import (
 	"github.com/PossibleNPC/sample-pokemon-app/internal/config"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/database"
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 	"log"
 	"net/http"
 	"os"
@@ -26,22 +25,13 @@ func main() {
 
 	app := &application{errorLog: errorLog, infoLog: infoLog}
 	app.cfg = config.NewConfig()
+	// TODO: We should migrate this over to the config file script instead
 	app.cfg.GetConfFile("./back-end/config.yml")
 	app.cfg.GetConfEnv()
 	app.cfg.PsqlConnString()
 	app.db = database.NewPokemonDb(app.cfg.Database.Dsn)
+	app.router = app.routes()
 
-	app.router = chi.NewRouter()
-	app.router.Use(middleware.Logger)
-	app.router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hello from Go-Chi!"))
-	})
-	app.router.Get("/pokemon", app.HandlePokemonResults)
-	app.router.Get("/pokemon/{name}", app.HandleNameResults)
-	app.router.Get("/pokemon/{type}", app.HandleTypeResults)
-
-	// TODO: The context for the app needs to come from Main, and not from the sub-modules
-	// More research is needed to fully understand Context.
 	err := http.ListenAndServe(":" + app.cfg.Api.Port, app.router); if err != nil {
 		errorLog.Fatalf("failed to start the server: %s", err)
 	}

@@ -50,7 +50,7 @@ func (app *application) HandlePokemonResults(w http.ResponseWriter, r *http.Requ
 		}
 		out, err := json.Marshal(pokemon)
 		if err != nil {
-			panic(err)
+			app.errorLog.Fatalf("error marshalling the results: %s", err)
 		}
 
 		w.Write(out)

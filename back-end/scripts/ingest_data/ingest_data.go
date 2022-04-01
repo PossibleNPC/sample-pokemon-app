@@ -17,7 +17,7 @@ func main() {
 	config.GetConfFile(&cfg, "./back-end/config.yml")
 	config.GetConfEnv(&cfg)
 
-	psqlConnString := fmt.Sprintf("postgres://%s:%s@%s:%d",
+	psqlConnString := fmt.Sprintf("postgres://%s:%s@%s:%s",
 		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
 
 	conn, err := pgx.Connect(context.Background(), psqlConnString)
