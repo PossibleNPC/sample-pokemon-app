@@ -3,6 +3,7 @@ package main
 // TODO: Purpose of this script is to start our server for the API
 
 import (
+	"flag"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/config"
 	"github.com/PossibleNPC/sample-pokemon-app/internal/database"
 	"github.com/go-chi/chi/v5"
@@ -20,16 +21,15 @@ type application struct {
 }
 
 func main() {
+	yamlFile := flag.String("yamlFile", "./back-end/config.yml", "file path to yaml file")
+
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
 	app := &application{errorLog: errorLog, infoLog: infoLog}
-	app.cfg = config.NewConfig()
-	// TODO: We should migrate this over to the config file script instead
-	app.cfg.GetConfFile("./back-end/config.yml")
-	app.cfg.GetConfEnv()
-	app.cfg.PsqlConnString()
+	app.cfg = config.NewConfig(*yamlFile)
 	app.db = database.NewPokemonDb(app.cfg.Database.Dsn)
+
 	app.router = app.routes()
 
 	err := http.ListenAndServe(":" + app.cfg.Api.Port, app.router); if err != nil {

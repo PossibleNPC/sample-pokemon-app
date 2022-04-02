@@ -21,11 +21,20 @@ type Config struct {
 	}`yaml:"api"`
 }
 
-func NewConfig() *Config {
-	return &Config{}
+// NewConfig is meant to return a config representing configuration of our app. It requires a filepath to a yaml file
+// that conforms to the struct above. Config value priority from low to high is: default app yaml = yaml file flag ->
+// os.ENV
+func NewConfig(filepath string) *Config {
+	cfg := &Config{}
+
+	cfg.getConfFile(filepath)
+	cfg.getConfEnv()
+	cfg.dsn()
+
+	return cfg
 }
 
-func (cfg *Config) GetConfFile(filepath string) {
+func (cfg *Config) getConfFile(filepath string) {
 	ymlConf, err := os.Open(filepath)
 	if err != nil {
 		confError(err)
@@ -39,14 +48,14 @@ func (cfg *Config) GetConfFile(filepath string) {
 	}
 }
 
-func (cfg *Config) GetConfEnv() {
+func (cfg *Config) getConfEnv() {
 	err := envconfig.Process("", cfg)
 	if err != nil {
 		confError(err)
 	}
 }
 
-func (cfg *Config) PsqlConnString() {
+func (cfg *Config) dsn() {
 	cfg.Database.Dsn = fmt.Sprintf("postgres://%s:%s@%s:%s?sslmode=disable",
 		cfg.Database.User, cfg.Database.Password, cfg.Database.Host, cfg.Database.Port)
 }
