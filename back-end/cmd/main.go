@@ -29,6 +29,7 @@ func main() {
 	app := &application{errorLog: errorLog, infoLog: infoLog}
 	app.cfg = config.NewConfig(*yamlFile)
 	app.db = database.NewPokemonDb(app.cfg.Database.Dsn)
+	defer app.db.CloseDb()
 
 	app.router = app.routes()
 

@@ -39,3 +39,7 @@ func (pokemonDb *PokemonDb) GetPokemon() (*sql.Rows, error) {
 
 	return rows, nil
 }
+
+func (pokemonDb *PokemonDb) CloseDb() error {
+	return pokemonDb.conn.Close()
+}
